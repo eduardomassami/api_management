@@ -1,0 +1,181 @@
+---
+openapi: 3.0.0
+info:
+  title: CRUD Customer API
+  description: This is a simple API of example for create, read, update and delete a customer.
+  contact:
+    name: Daniela Jesus, Eduardo Uchida e Rodrigo Rossiter
+    email: aluno@aluno.faculdadeimpacta.com.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/rossiter/Customers/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /v1/customers:
+    get:
+      summary: searches customers
+      description: |
+        By passing in the appropriate options, you can search for
+        available customers in the system
+      parameters:
+      - name: id
+        in: query
+        description: pass an optional id customer for looking up customer
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: pass an optional name customer for looking up customer
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerItem'
+        "400":
+          description: bad input parameter
+        "401":
+          description: unauthorized
+        "404":
+          description: not found
+        "500":
+          description: internal server error
+      security:
+      - ApiKeyAuth: []
+    post:
+      summary: adds customer
+      description: Adds customer
+      requestBody:
+        description: Customer to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerItem'
+      responses:
+        "201":
+          description: customer created
+        "400":
+          description: invalid input, object invalid
+        "401":
+          description: unauthorized
+        "409":
+          description: an existing customer already exists
+        "500":
+          description: internal server error
+      security:
+      - ApiKeyAuth: []
+    delete:
+      summary: delete customers
+      description: remove clients
+      parameters:
+      - name: id
+        in: query
+        description: pass a required id customer for looking up customer
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: delete customer
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "400":
+          description: bad input parameter
+        "401":
+          description: unauthorized
+        "404":
+          description: not found
+        "500":
+          description: internal server error
+      security:
+      - ApiKeyAuth: []
+    patch:
+      summary: update customers
+      description: update client
+      parameters:
+      - name: id
+        in: query
+        description: pass a required id for looking up customer
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        description: Customer update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdate'
+      responses:
+        "200":
+          description: update data customer
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "400":
+          description: bad input parameter
+        "401":
+          description: unauthorized
+        "404":
+          description: not found
+        "500":
+          description: internal server error
+      security:
+      - ApiKeyAuth: []
+components:
+  schemas:
+    CustomerItem:
+      required:
+      - birthDate
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Daniela
+        birthDate:
+          type: string
+          format: date-time
+          example: 2016-08-29T09:12:33.001Z
+    CustomerUpdate:
+      required:
+      - birthDate
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: Daniela
+        birthDate:
+          type: string
+          format: date-time
+          example: 2016-08-29T09:12:33.001Z
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-Key
+      in: header
